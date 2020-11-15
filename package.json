@@ -1,0 +1,27 @@
+{
+  "name": "BackEndDev",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "server": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cloud-School-Project/BackEndDev.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cloud-School-Project/BackEndDev/issues"
+  },
+  "homepage": "https://github.com/Cloud-School-Project/BackEndDev#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "knex": "^0.21.12",
+    "node": "^15.2.0",
+    "nodemon": "^2.0.6",
+    "sqlite3": "^5.0.0"
+  }
+}
