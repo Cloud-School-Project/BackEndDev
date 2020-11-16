@@ -19,21 +19,15 @@ function findClasses() {
 }
 
 async function addVolunteer(user) {
-  try {
     const [id] = await db("volunteer").insert(user, "id");
-    return findVolunteerById(id);
-  } catch (error) {
-    throw error;
-  }
+    return findVolunteerById(user.username);
+  
 }
 
 async function addStudent(user) {
-    try {
       const [id] = await db("student").insert(user, "id");
-      return findStudentById(id);
-    } catch (error) {
-      throw error;
-    }
+      return findStudentById(user.username);
+   
   }
 
   async function addClass(data) {
@@ -75,13 +69,13 @@ async function addStudent(user) {
 
 
 
-function findStudentById(id) {
-  return db("student").where({ id }).first();
+function findStudentById(username) {
+  return db("student").where({ username })
 }
 
 function findVolunteerById(username) {
   console.log(username)
-  return db("volunteer").where({ username});
+  return db("volunteer").where({ username });
 }
 
 function findAdminById(id) {

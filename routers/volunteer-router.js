@@ -24,7 +24,7 @@ router.post('/register', async (req, res)=>{
       credentials.password = hash;
       addVolunteer(credentials)
       .then(user => {
-          res.status(201).json({data:user})
+          res.status(201).json({data: user[0]})
       })
   }
   else {
