@@ -79,8 +79,9 @@ function findStudentById(id) {
   return db("student").where({ id }).first();
 }
 
-function findVolunteerById(id) {
-  return db("volunteer").where({ id }).first();
+function findVolunteerById(username) {
+  console.log(username)
+  return db("volunteer").where({ username});
 }
 
 function findAdminById(id) {

@@ -1,27 +1,46 @@
 const express = require('express');
-const Helper = require ('./main-model')
+const {addStudent,
+  addVolunteer,
+  findClasses,
+  addClass,
+  updateClass,
+  deleteClass,
+  findStudentById,
+  findVolunteerById,
+  findAdminById,
+  getLoggedOutList,
+  addLoggedOut,}
+  = require ('./main-model')
 const bcryptjs = require('bcryptjs');
-
+const {makeToken,restricted,isValid} = require('./middle-ware')
 
 const router = express.Router();
 
-router.get('/classes',(req,res) =>{
-  Helper.findClasses()
-  .then(classes => {
-    res.status(200).json(classes);
-  })
-  .catch(err => {
-    res.status(500).json({ message: "Failed to get Classes", message:err.message });
-  });
+router.post('/register', async (req, res)=>{
+  const credentials = req.body //used to get data from the post request
 
+  if(isValid(credentials)){
+      const hash = bcryptjs.hashSync(credentials.password, 8) // sets how many times the pass is hashed
+      credentials.password = hash;
+      addVolunteer(credentials)
+      .then(user => {
+          res.status(201).json({data:user})
+      })
+  }
+  else {
+      res.status(400).json({
+          message: "please provide username and password and the password should be alphanumeric",
+      });
+  }
 })
 
 router.post('/login', (req, res)=>{
     const {username, password} = req.body
-
     if(isValid(req.body)){
-        Helper.findBy({username:username})
+      console.log("made it past valid checker")
+      findVolunteerById(username)
         .then(([user]) => {
+          console.log("this is the return from find by id", user)
             if (user && bcryptjs.compareSync(password, user.password)){
                 const token = makeToken(user) // makes the token
                 res.status(200).json({message: "Welcome Friendo", token})
@@ -43,55 +62,32 @@ router.post('/login', (req, res)=>{
     }
 })
 
-router.get('/',(req,res) =>{
-    Helper.getAllHelpers()
-    .then(Helper => {
-      res.status(200).json(Helper);
-    })
-    .catch(err => {
-      res.status(500).json({ message: "Failed to get Helpers", message:err.message });
-    });
-})
 
-router.get('/:id',(req,res) =>{
-  Helper.getHelperById(req.params.id)
-  .then(Helper => {
-    res.status(200).json(Helper);
+router.get('/classes',(req,res) =>{
+  findClasses()
+  .then(classes => {
+    res.status(200).json(classes);
   })
   .catch(err => {
-    res.status(500).json({ message: "Failed to get Helper", message:err.message });
+    res.status(500).json({ message: "Failed to get Classes", message:err.message });
   });
+
 })
 
-router.post("/", (req, res) => {
-  const Helper = req.body;
-  Helper.addHelper(Helper)
-  Helper.getAllHelpers()
-    .then(result => {
-      res.status(201).json(result);
-    })
-    .catch(err => {
-      res.status(500).json({ message: "Failed to create new resource" });
-    });
-});
+// router.get('/:id',(req,res) =>{
+//   (req.params.id)
+//   .then(Helper => {
+//     res.status(200).json(Helper);
+//   })
+//   .catch(err => {
+//     res.status(500).json({ message: "Failed to get Helper", message:err.message });
+//   });
+// })
 
-router.post("/res", (req, res) => {
 
-  const resource = req.body;
-  Helper.addResource(resource)
-  Helper.getResources()
-    .then(result => {
-      res.status(201).json(result);
-    })
-    .catch(err => {
-      res.status(500).json({ message: "Failed to create new resource" });
-    });
-});
-
-router.post("/tasks", (req, res) => {
-  const task = req.body;
-  Helper.addTask(task)
-  Helper.getTasks()
+router.put("/class", (req, res) => {
+  const update = req.body;
+  updateClass(update)
     .then(result => {
       res.status(201).json(result);
     })
@@ -99,8 +95,4 @@ router.post("/tasks", (req, res) => {
       res.status(500).json({ message: "Failed to create new task" });
     });
 });
-
-
-
-
 module.exports = router;
