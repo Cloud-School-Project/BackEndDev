@@ -1,4 +1,4 @@
-const {getLoggedOutList}= require ('./main-model')
+const {getLoggedOutList} = require ('./main-model')
 const jwt = require('jsonwebtoken');
 const {jwtSecret} = require('./secrets.js');
 const bcryptjs = require('bcryptjs');
