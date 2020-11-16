@@ -15,11 +15,11 @@ const {addStudent,
     = require ('./main-model')
 
     const bcryptjs = require('bcryptjs');
-const {makeToken,restricted,isValid} = require('./middle-ware')
+const {makeToken,restricted,isValid,checkStudent} = require('./middle-ware')
 
 const router = express.Router();
 
-router.post('/register', async (req, res)=>{
+router.post('/register', checkStudent, async (req, res)=>{
     const credentials = req.body //used to get data from the post request
   
     if(isValid(credentials)){
@@ -35,15 +35,13 @@ router.post('/register', async (req, res)=>{
             message: "please provide username and password and the password should be alphanumeric",
         });
     }
-  })
+ })
   
   router.post('/login', (req, res)=>{
       const {username, password} = req.body
       if(isValid(req.body)){
-        console.log("made it past valid checker")
         findStudentById(username)
           .then(([user]) => {
-            console.log("this is the return from find by id", user)
               if (user && bcryptjs.compareSync(password, user.password)){
                   const token = makeToken(user) // makes the token
                   res.status(200).json({message: "Welcome Friendo", token})

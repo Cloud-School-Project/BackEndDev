@@ -11,6 +11,8 @@ module.exports = {
   findAdminById,
   getLoggedOutList,
   addLoggedOut,
+  findVolunteerByEmail,
+  findStudentByEmail
 };
 function findClasses() {
   return db("classes")
@@ -19,15 +21,14 @@ function findClasses() {
 }
 
 async function addVolunteer(user) {
-    const [id] = await db("volunteer").insert(user, "id");
+    // console.log("What we send to as user", user)
+    const [id] = await db("volunteer").insert(user);
     return findVolunteerById(user.username);
-  
 }
 
 async function addStudent(user) {
-      const [id] = await db("student").insert(user, "id");
+      const [id] = await db("student").insert(user);
       return findStudentById(user.username);
-   
   }
 
   async function addClass(data) {
@@ -72,12 +73,15 @@ async function addStudent(user) {
 function findStudentById(username) {
   return db("student").where({ username })
 }
-
+function findStudentByEmail(email) {
+  return db("student").where({ email });
+}
 function findVolunteerById(username) {
-  console.log(username)
   return db("volunteer").where({ username });
 }
-
+function findVolunteerByEmail(email) {
+  return db("volunteer").where({ email });
+}
 function findAdminById(id) {
   return db("admin").where({ id }).first();
 }
