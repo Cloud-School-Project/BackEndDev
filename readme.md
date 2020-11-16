@@ -1,6 +1,6 @@
 # Cloud School
 
-Deployment url: Not up yet
+Deployment url: https://lambdacloud.herokuapp.com/
 
 ## Authorization </br>
 
@@ -14,6 +14,7 @@ This creates a new user in the database, and returns both the *user object* and 
 |----------|----------|--------|-----------|------------------------------|
 | username |   yes    | string |     yes   | the username of the user     |
 | password |   yes    | string |     no    | the password of the user     |
+| email    |   yes    | string |     yes   | the email of the user     |
 
 <br>
 
