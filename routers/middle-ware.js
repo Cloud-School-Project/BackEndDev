@@ -1,4 +1,4 @@
-const {getLoggedOutList} = require ('./main-model')
+const {getLoggedOutList,findVolunteerById,findStudentById, findVolunteerByEmail,findStudentByEmail } = require ('./main-model')
 const jwt = require('jsonwebtoken');
 const {jwtSecret} = require('./secrets.js');
 const bcryptjs = require('bcryptjs');
@@ -7,6 +7,8 @@ module.exports = {
     makeToken,
     restricted,
     isValid,
+    checkVolunteer,
+    checkStudent,
 };
 
 
@@ -22,10 +24,60 @@ function makeToken(user) {
     return jwt.sign(payload, jwtSecret, options);
   }
 
-  function isValid(user) {
+function isValid(user) {
     return Boolean(user.username && user.password && typeof user.password === "string");
   }
 
+function checkVolunteer(req,res,next) {
+    findVolunteerById(req.body.username)
+    .then(response =>{
+      if(response.length<1){
+        findVolunteerByEmail(req.body.email)
+        .then(result=>{
+          if(result.length<1)
+          {
+            next()
+          }
+          else
+          {
+            res.status(401).json({message: "user already exists"})
+          }
+        })
+      }
+      else
+      {
+       res.status(401).json({message: "user already exists"})
+      }
+     })
+    .catch(error =>{
+      console.log("this is error",error)
+    })
+  }
+function checkStudent(req,res,next) {
+    findStudentById(req.body.username)
+    .then(response =>{
+      if(response.length<1){
+        findStudentByEmail(req.body.email)
+        .then(result=>{
+          if(result.length<1)
+          {
+            next()
+          }
+          else
+          {
+            res.status(401).json({message: "user already exists"})
+          }
+        })
+      }
+      else
+      {
+       res.status(401).json({message: "user already exists"})
+      }
+     })
+    .catch(error =>{
+      console.log("this is error",error)
+    })
+  }
 
 //Checks for for logged out tokens
 
@@ -45,7 +97,6 @@ function restricted (req,res,next) {
         if (err) {
          return res.status(401).json({ message: 'token bad' });
         }
-        //console.log('decoded token ->', decoded, "token",token);
         req.decodedJwt = decoded;
         next();
     })

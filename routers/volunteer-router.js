@@ -11,21 +11,24 @@ const {addStudent,
   getLoggedOutList,
   addLoggedOut,}
   = require ('./main-model')
+
 const bcryptjs = require('bcryptjs');
-const {makeToken,restricted,isValid} = require('./middle-ware')
+const {makeToken,restricted,isValid,checkVolunteer} = require('./middle-ware')
 
 const router = express.Router();
 
-router.post('/register', async (req, res)=>{
+router.post('/register', checkVolunteer, async (req, res)=>{
   const credentials = req.body //used to get data from the post request
-
   if(isValid(credentials)){
       const hash = bcryptjs.hashSync(credentials.password, 8) // sets how many times the pass is hashed
       credentials.password = hash;
       addVolunteer(credentials)
-      .then(user => {
-          res.status(201).json({data:user})
-      })
+      .then(response => {
+      res.status(200).json(response)
+      }) 
+      .catch(error =>{
+        res.status(401).json({message: error})
+      })  
   }
   else {
       res.status(400).json({
@@ -37,10 +40,8 @@ router.post('/register', async (req, res)=>{
 router.post('/login', (req, res)=>{
     const {username, password} = req.body
     if(isValid(req.body)){
-      console.log("made it past valid checker")
       findVolunteerById(username)
         .then(([user]) => {
-          console.log("this is the return from find by id", user)
             if (user && bcryptjs.compareSync(password, user.password)){
                 const token = makeToken(user) // makes the token
                 res.status(200).json({message: "Welcome Friendo", token})

@@ -11,6 +11,8 @@ module.exports = {
   findAdminById,
   getLoggedOutList,
   addLoggedOut,
+  findVolunteerByEmail,
+  findStudentByEmail
 };
 function findClasses() {
   return db("classes")
@@ -19,21 +21,14 @@ function findClasses() {
 }
 
 async function addVolunteer(user) {
-  try {
-    const [id] = await db("volunteer").insert(user, "id");
-    return findVolunteerById(id);
-  } catch (error) {
-    throw error;
-  }
+    // console.log("What we send to as user", user)
+    const [id] = await db("volunteer").insert(user);
+    return findVolunteerById(user.username);
 }
 
 async function addStudent(user) {
-    try {
-      const [id] = await db("student").insert(user, "id");
-      return findStudentById(id);
-    } catch (error) {
-      throw error;
-    }
+      const [id] = await db("student").insert(user);
+      return findStudentById(user.username);
   }
 
   async function addClass(data) {
@@ -75,15 +70,18 @@ async function addStudent(user) {
 
 
 
-function findStudentById(id) {
-  return db("student").where({ id }).first();
+function findStudentById(username) {
+  return db("student").where({ username })
 }
-
+function findStudentByEmail(email) {
+  return db("student").where({ email });
+}
 function findVolunteerById(username) {
-  console.log(username)
-  return db("volunteer").where({ username});
+  return db("volunteer").where({ username });
 }
-
+function findVolunteerByEmail(email) {
+  return db("volunteer").where({ email });
+}
 function findAdminById(id) {
   return db("admin").where({ id }).first();
 }
