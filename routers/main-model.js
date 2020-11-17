@@ -12,48 +12,41 @@ module.exports = {
   getLoggedOutList,
   addLoggedOut,
   findVolunteerByEmail,
-  findStudentByEmail
+  findStudentByEmail,
+  findClassBySubject,
 };
 function findClasses() {
   return db("classes")
-    .select("id", "closed", "subject", "morning", "afternoon", "evening")
+    .select("id", "completed", "subject", "morning", "afternoon", "evening")
     .orderBy("id");
 }
-
-async function addVolunteer(user) {
-    // console.log("What we send to as user", user)
-    const [id] = await db("volunteer").insert(user);
-    return findVolunteerById(user.username);
+async function addClass(course) {
+  try {
+    const [id] = await db("classes").insert(course);
+    return findClasses();
+  } catch (error) {
+    throw error;
+  }
 }
-
-async function addStudent(user) {
-      const [id] = await db("student").insert(user);
-      return findStudentById(user.username);
-  }
-
-  async function addClass(data) {
-    try {
-      const [id] = await db("classes").insert(data, "id");
-      return findClasses()
-    } catch (error) {
-      throw error;
-    }
-  }
-
-   function updateClass(changes, id) {
-    return db('classes')
-    .where({ id: id })
+async function updateClass(changes) {
+  const newSubject = changes.subject;
+  return db("classes")
+    .where({ subject: newSubject })
     .update(changes)
-    .then(res => {
-        return db('classes')
-        .where({ id: id })
-    })
+    .then((res) => {
+      return db("classes").where({ subject: newSubject });
+    });
 }
-
-  async function deleteClass(id) {
-      return db('classes').where({ id }).delete();
-  }
-
+function findClassBySubject(subject) {
+  return db("classes").where({ subject }).select("id");
+}
+function findStudentByEmail(email) {
+  return db("student").where({ email });
+}
+function deleteClass(id) {
+  console.log("what is id now ", id[0].id);
+  return db("classes").where({ id: id[0].id }).delete();
+}
 //   async function addAdmin(user) {
 //     try {
 //       const [id] = await db("admin").insert(user, "id");
@@ -62,16 +55,17 @@ async function addStudent(user) {
 //       throw error;
 //     }
 //   }
-
-
-
-
-
-
-
-
+async function addVolunteer(user) {
+  // console.log("What we send to as user", user)
+  const [id] = await db("volunteer").insert(user);
+  return findVolunteerById(user.username);
+}
+async function addStudent(user) {
+  const [id] = await db("student").insert(user);
+  return findStudentById(user.username);
+}
 function findStudentById(username) {
-  return db("student").where({ username })
+  return db("student").where({ username });
 }
 function findStudentByEmail(email) {
   return db("student").where({ email });
@@ -85,15 +79,9 @@ function findVolunteerByEmail(email) {
 function findAdminById(id) {
   return db("admin").where({ id }).first();
 }
-
-
-
-
-
 function getLoggedOutList(filter) {
   return db("loggedout").select("test"); // Sends back the whole list of logged out tokens
 }
-
 async function addLoggedOut(token) {
   try {
     const [test] = await db("loggedout").insert(token, "id"); //Adds the token brought in to our logged out list.
