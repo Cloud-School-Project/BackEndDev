@@ -16,7 +16,7 @@ module.exports = {
 };
 function findClasses() {
   return db("classes")
-    .select("id", "closed", "subject", "morning", "afternoon", "evening")
+    .select("id", "completed", "subject", "morning", "afternoon", "evening")
     .orderBy("id");
 }
 
@@ -31,9 +31,9 @@ async function addStudent(user) {
       return findStudentById(user.username);
   }
 
-  async function addClass(data) {
+  async function addClass(course) {
     try {
-      const [id] = await db("classes").insert(data, "id");
+      const [id] = await db("classes").insert(course);
       return findClasses()
     } catch (error) {
       throw error;
