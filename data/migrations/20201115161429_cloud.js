@@ -71,10 +71,10 @@ exports.up = function (knex) {
     })
 
     .createTable("admin", (tbl) => {
-        tbl.increments();
-        tbl.string("username", 120).notNullable().unique();
-        tbl.string("password", 120).notNullable();
-      })
+      tbl.increments();
+      tbl.string("username", 120).notNullable().unique();
+      tbl.string("password", 120).notNullable();
+    });
 };
 exports.down = async function (knex) {
   await knex.schema.dropTableIfExists("admin");

@@ -1,39 +1,23 @@
 const express = require("express");
-const Helper = require("./main-model");
-
-const {
-  addStudent,
-  addVolunteer,
-  findClasses,
-  addClass,
-  updateClass,
-  deleteClass,
-  findStudentById,
-  findVolunteerById,
-  findAdminById,
-  getLoggedOutList,
-  addLoggedOut,
-} = require("./main-model");
-
 const bcryptjs = require("bcryptjs");
-const {
-  makeToken,
-  restricted,
-  isValid,
-  checkStudent,
-} = require("./middle-ware");
+const { makeToken, isValid } = require("../routers/middle-ware");
+const { findAdminById, addAdmin } = require("./admin-model");
+const { getMaxListeners } = require("../data/db-config");
 
 const router = express.Router();
 
-router.post("/register", checkStudent, async (req, res) => {
+router.post("/register", checkAdmin, async (req, res) => {
   const credentials = req.body; //used to get data from the post request
-
   if (isValid(credentials)) {
     const hash = bcryptjs.hashSync(credentials.password, 8); // sets how many times the pass is hashed
     credentials.password = hash;
-    addStudent(credentials).then((user) => {
-      res.status(201).json({ data: user[0] });
-    });
+    addAdmin(credentials)
+      .then((response) => {
+        res.status(200).json(response);
+      })
+      .catch((error) => {
+        res.status(401).json({ message: error });
+      });
   } else {
     res.status(400).json({
       message:
@@ -45,7 +29,7 @@ router.post("/register", checkStudent, async (req, res) => {
 router.post("/login", (req, res) => {
   const { username, password } = req.body;
   if (isValid(req.body)) {
-    findStudentById(username)
+    findAdminById(username)
       .then(([user]) => {
         if (user && bcryptjs.compareSync(password, user.password)) {
           const token = makeToken(user); // makes the token
@@ -63,5 +47,31 @@ router.post("/login", (req, res) => {
     });
   }
 });
+
+function checkAdmin(req,res,next) {
+    findAdminById(req.body.username)
+    .then(response =>{
+      if(response.length<1){
+        findAdminByEmail(req.body.email)
+        .then(result=>{
+          if(result.length<1)
+          {
+            next() 
+          }
+          else
+          {
+            res.status(401).json({message: "user already exists"})
+          }
+        })
+      }
+      else
+      {
+       res.status(401).json({message: "user already exists"})
+      }
+     })
+    .catch(error =>{
+      console.log("this is error",error)
+    })
+  }
 
 module.exports = router;
