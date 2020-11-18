@@ -18,8 +18,11 @@ This creates a new user in the database, and returns both the *user object* and 
 | email    |   yes    | string |     yes   | the email of the user     |
 
 <br>
-### POST /admin/login (Only Username and Password)
+
+### POST /admin/login   (Only Username and Password)
+
 ### POST /volunteer/login
+
 ### POST /student/login
 <br>
 
