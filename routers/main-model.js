@@ -12,26 +12,15 @@ module.exports = {
   getLoggedOutList,
   addLoggedOut,
   findVolunteerByEmail,
-  findStudentByEmail
+  findStudentByEmail,
+  findClassBySubject
 };
 function findClasses() {
   return db("classes")
     .select("id", "completed", "subject", "morning", "afternoon", "evening")
     .orderBy("id");
 }
-
-async function addVolunteer(user) {
-    // console.log("What we send to as user", user)
-    const [id] = await db("volunteer").insert(user);
-    return findVolunteerById(user.username);
-}
-
-async function addStudent(user) {
-      const [id] = await db("student").insert(user);
-      return findStudentById(user.username);
-  }
-
-  async function addClass(course) {
+async function addClass(course) {
     try {
       const [id] = await db("classes").insert(course);
       return findClasses()
@@ -40,18 +29,32 @@ async function addStudent(user) {
     }
   }
 
-   function updateClass(changes, id) {
+async function updateClass(changes) {
+    const newSubject = changes.subject
     return db('classes')
-    .where({ id: id })
+    .where({subject:newSubject})
     .update(changes)
     .then(res => {
         return db('classes')
-        .where({ id: id })
+        .where({ subject:newSubject })
     })
 }
 
-  async function deleteClass(id) {
-      return db('classes').where({ id }).delete();
+function findClassBySubject(subject) {
+return db('classes').where({ subject })
+}
+
+function findStudentByEmail(email) {
+  return db("student").where({ email });
+}
+
+
+function deleteClass(id) {
+  console.log("what is id now ",  id[0].id)
+      return db('classes')
+      .where( {id:id[0].id} )
+      .delete()
+     
   }
 
 //   async function addAdmin(user) {
@@ -64,7 +67,16 @@ async function addStudent(user) {
 //   }
 
 
+async function addVolunteer(user) {
+  // console.log("What we send to as user", user)
+  const [id] = await db("volunteer").insert(user);
+  return findVolunteerById(user.username);
+}
 
+async function addStudent(user) {
+    const [id] = await db("student").insert(user);
+    return findStudentById(user.username);
+}
 
 
 
