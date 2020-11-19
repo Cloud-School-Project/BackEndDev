@@ -55,10 +55,9 @@ router.delete("/class",validClass, async (req, res) => {
 router.post("/class", validClass, (req, res) => {
     const course = req.body
     addClass(course)
-    findClasses()
-      .then(result => {
-        res.status(201).json(result);
-      })
+    .then(result => {
+      findClasses().then(classes =>res.status(201).json(classes))
+    })
       .catch(err => {
         res.status(500).json({ message: "Failed to create new task" });
       });
