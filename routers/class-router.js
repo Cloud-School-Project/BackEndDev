@@ -30,6 +30,7 @@ router.get('/class',(req,res) =>{
 router.put("/class",validClass,classUpdateCheck, (req, res) => {
   const changes = req.body;
   updateClass(changes)
+  findClasses()
     .then(result => {
       res.status(201).json(result);
     })
@@ -54,6 +55,7 @@ router.delete("/class",validClass, async (req, res) => {
 router.post("/class", validClass, (req, res) => {
     const course = req.body
     addClass(course)
+    findClasses()
       .then(result => {
         res.status(201).json(result);
       })

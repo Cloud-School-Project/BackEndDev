@@ -4,6 +4,7 @@ Deployment url: https://lambdacloud.herokuapp.com/
 
 ## Authorization </br>
 
+### POST /admin/signup  (Only Username and Password)
 ### POST /volunteer/signup 
 ### POST /student/signup
 <br>
@@ -18,7 +19,10 @@ This creates a new user in the database, and returns both the *user object* and 
 
 <br>
 
+### POST /admin/login   (Only Username and Password)
+
 ### POST /volunteer/login
+
 ### POST /student/login
 <br>
 
@@ -32,10 +36,9 @@ This creates a *token* and returns it if login was successful
 <br><br>
 
 
-
 ## Classes 
 
-### GET /classes
+### GET /classes/class
 
 Returns a list of all Classes
 
@@ -48,53 +51,19 @@ Article Object:
 | Completed| String  | Whether the class is done or not                 |
 | Morning  | Integer | Id if class has volunteer for this time          |
 | Afternoon| Integer | Id if class has volunteer for this time          |
-| Evening  | Integer |  Id if class has volunteer for this time         |
+| Evening  | Integer | Id if class has volunteer for this time          |
 <br>
 
-### GET /articles/:id
+### Post /classes/class
+Required Subject ONLY (min 3 chars for subject name)
 
-Returns the *article with corresponding id*
+Returns a list of all Classes
 
-| Name      | Requried | Type          | Unique?   | Description           |
-|-----------|----------|---------------|-----------|-----------------------|
-|    id     |    yes   | URL Parameter |   yes     | The Id of the article |
+<br>
 
-### PUT /edit_articles/:id
+### Put /classes/class
+Required Subject (min 3 chars for subject name)
+Optional Changes: value of Morning, Afternoon, or Evening to an active Volunteer Id
+Completed: to true, if class is complete
 
-**Requires Authentication**
-
-Returns the *updated list*
-
-All values in article object except id can be changed
-
-## Saved Articles
-
-These endpoints require you to be logged in
-
-### GET /
-
-Returns the list of article objects saved by user
-
-Saved Articles Object:
-
-| Name       | Type    | Description                                      |
-|------------|---------|--------------------------------------------------|
-| Id         | Integer | Autoincremented Id                               |
-| user_id    | Integer | Id of the specific user who liked the article    |
-| article_id | Integer | Id of the article that was liked                 |
-
-### POST /:articleId
-
-Returns object with the *current user's id (user_id)* *article_id, and updated list*
-
-| Name             | Requried | Type          | Unique?   | Description                                 |
-|------------------|----------|---------------|-----------|---------------------------------------------|
-| articleId        |    yes   | URL Parameter |   yes     | The id of the article that you want to save |
-
-### DELETE /:articleId
-
-Returns the updated list of saved articles for user
-
-| Name      | Requried | Type          | Unique?   | Description                                         |
-|-----------|----------|---------------|-----------|-----------------------------------------------------|
-| id        |    yes   | URL Parameter |   yes     | The Id of the saved article that you want to delete |
+<br>
