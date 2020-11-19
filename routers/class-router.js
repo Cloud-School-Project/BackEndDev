@@ -43,13 +43,15 @@ router.delete("/class",validClass, async (req, res) => {
     const newId = await findClassBySubject(req.body.subject)
     const needToDelete = req.body;
     deleteClass(newId)
-      .then(result => {
-        console.log("result = ", result)
-        res.status(201).json(`${needToDelete.subject} class removed`);
-      })
-      .catch(err => {
-        res.status(500).json({ message: "Failed to delete class, might not exist", err });
-      });
+    .then(deleted =>{
+    findClasses()
+        .then(result => {
+          res.status(201).json(result);
+        })
+        .catch(err => {
+          res.status(500).json({ message: "Failed to delete class, might not exist", err });
+        })
+      })    
   });
 
 router.post("/class", validClass, (req, res) => {
