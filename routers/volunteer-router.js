@@ -1,5 +1,7 @@
 const express = require('express');
-const {addStudent,
+const {
+  getVolunteers,
+  addStudent,
   addVolunteer,
   findClasses,
   addClass,
@@ -9,13 +11,26 @@ const {addStudent,
   findVolunteerById,
   findAdminById,
   getLoggedOutList,
-  addLoggedOut,}
+  addLoggedOut
+}
   = require ('./main-model')
 
 const bcryptjs = require('bcryptjs');
 const {makeToken,restricted,isValid,checkVolunteer} = require('./middle-ware')
 
 const router = express.Router();
+
+router.get ('/', async (req, res)=>{
+      getVolunteers()
+      .then(response => {
+      res.status(200).json(response)
+      }) 
+      .catch(error =>{
+        res.status(400).json({message: `No volunteers, ${error}`})
+      })  
+})
+
+
 
 router.post('/register', checkVolunteer, async (req, res)=>{
   const credentials = req.body //used to get data from the post request
