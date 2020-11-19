@@ -1,5 +1,6 @@
 const db = require("../data/db-config");
 module.exports = {
+  getVolunteers,
   addStudent,
   addVolunteer,
   findClasses,
@@ -19,6 +20,9 @@ function findClasses() {
   return db("classes")
     .select("id", "completed", "subject", "morning", "afternoon", "evening")
     .orderBy("id");
+}
+function getVolunteers() {
+  return db("volunteer").select("id","username","email").orderBy("id")
 }
 async function addClass(course) {
     try {
