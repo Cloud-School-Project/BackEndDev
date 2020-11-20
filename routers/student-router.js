@@ -58,7 +58,7 @@ router.post('/register', checkStudent, async (req, res)=>{
       else
       {
           res.status(400).json({
-              message:"Please provide valid shit!"
+              message:"Please provide valid creds!"
           })
       }
   })

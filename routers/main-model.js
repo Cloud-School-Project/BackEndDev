@@ -89,9 +89,7 @@ async function addStudent(user) {
 function findStudentById(username) {
   return db("student").where({ username })
 }
-function findStudentByEmail(email) {
-  return db("student").where({ email });
-}
+
 function findVolunteerById(username) {
   return db("volunteer").where({ username });
 }
